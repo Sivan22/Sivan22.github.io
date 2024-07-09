@@ -1,0 +1,56 @@
+---
+import type {
+  FrontmatterPage,
+  IFrontmatter,
+} from 'astro-boilerplate-components';
+import {
+  BlogGallery,
+  NewerOlderPagination,
+  PaginationHeader,
+  Section,
+} from 'astro-boilerplate-components';
+
+import Base from '@/templates/Base.astro';
+import { AppConfig } from '@/utils/AppConfig';
+import { sortByDate } from '@/utils/Posts';
+
+type GetStaticPaths = {
+  paginate: any;
+}; // Overrides `GetStaticPathsOptions` types from Astro
+
+export async function getStaticPaths({ paginate }: GetStaticPaths) {
+  const allPosts = await Astro.glob<IFrontmatter>('./*.md');
+  const sortedPosts = sortByDate(allPosts);
+
+  // Return a paginated collection of paths for all posts
+  return paginate(sortedPosts, { pageSize: 6 });
+}
+
+interface Props {
+  page: FrontmatterPage;
+}
+
+const { page } = Astro.props as Props;
+const titleSuffix = ` - ${AppConfig.site_name}`;
+const titleBase = `Blog page ${page.currentPage}`;
+const title = titleBase + titleSuffix;
+const description =
+  'Pagination example built with Astro styled with Tailwind CSS.';
+---
+
+<Base head={{ title, description }}>
+  <Section>
+    <PaginationHeader
+      title='המאמרים שלי'
+      description='כאן אני משתף בתובנות אליהן נחשפתי או חדשות שאיני מסוגל לשמור לעצמי'
+    />
+  </Section>
+
+  <Section>
+    <BlogGallery postList={page.data} />
+  </Section>
+
+  <Section>
+    <NewerOlderPagination page={page} />
+  </Section>
+</Base>
