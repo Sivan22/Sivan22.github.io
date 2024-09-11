@@ -1,3 +1,3 @@
 User-agent: *
 Allow: /
-Sitemap: https://example.com/sitemap-index.xml
+Sitemap: https://sivan22.github.io/sitemap-index.xml
